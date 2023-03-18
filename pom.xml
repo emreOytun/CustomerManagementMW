@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.emreoytun</groupId>
-	<artifactId>tutorial</artifactId>
+	<artifactId>customer-management-mw</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>tutorial</name>
 	<description>Demo project for Spring Boot</description>
