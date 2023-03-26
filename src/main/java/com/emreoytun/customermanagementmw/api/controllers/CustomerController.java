@@ -1,9 +1,14 @@
 package com.emreoytun.customermanagementmw.api.controllers;
 
 import com.emreoytun.customermanagementmw.business.abstracts.CustomerService;
-import com.emreoytun.customermanagementmw.entities.concretes.Customer;
+import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerAddRequest;
+import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerUpdateRequest;
+import com.emreoytun.customermanagementmw.dto.customer.responses.CustomerGetResponse;
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,39 +27,41 @@ public class CustomerController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@RequestBody @Valid Customer customer) {
-        customerService.add(customer);
-    }
-
-    // /customers/3
-    @GetMapping("/filter")
-    @ResponseStatus(HttpStatus.OK)
-    public Customer getCustomerById(@RequestParam(value = "id", required = true) int id) {
-        return customerService.getById(id);
-    }
-
-    @GetMapping()
-    @ResponseStatus(HttpStatus.OK)
-    public List<Customer> getAllCustomers() {
-        return customerService.getAll();
+    public void add(@RequestBody @Valid CustomerAddRequest customerAddDto) {
+        customerService.addCustomer(customerAddDto);
     }
 
     @PutMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateCustomer(@RequestBody @Valid Customer customer) {
-        customerService.update(customer);
+    @CacheEvict("CUSTOMERS")
+    public void updateCustomer(@RequestBody @Valid CustomerUpdateRequest customerUpdateDto) {
+        customerService.updateCustomer(customerUpdateDto);
     }
 
     // TODO: ONLY-ADMIN
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCustomer(@PathVariable("id") int id) {
-        customerService.delete(id);
+        customerService.deleteCustomer(id);
+    }
+
+    // /customers/3
+    @GetMapping("/filter")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerGetResponse getCustomerById(@RequestParam(value = "id", required = true) int id) {
+        return customerService.getCustomerById(id);
+    }
+
+    @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
+    @Cacheable("CUSTOMERS")
+    public List<CustomerGetResponse> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 
     @GetMapping("/page")
     @ResponseStatus(HttpStatus.OK)
-    public List<Customer> getCustomersByPage(@RequestParam(value = "pageSize", required = true) int pageSize,
+    public List<CustomerGetResponse> getCustomersByPage(@RequestParam(value = "pageSize", required = true) int pageSize,
                                              @RequestParam(value = "pageNo", required = true) int pageNo) {
 
         return customerService.getCustomersByPageNo(pageSize, pageNo);

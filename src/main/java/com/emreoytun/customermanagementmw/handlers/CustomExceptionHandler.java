@@ -1,4 +1,4 @@
-package com.emreoytun.customermanagementmw.business.handlers;
+package com.emreoytun.customermanagementmw.handlers;
 
 import com.emreoytun.customermanagementmw.business.exceptions.CustomerBusinessRulesException;
 import com.emreoytun.customermanagementmw.dto.results.ErrorResult;

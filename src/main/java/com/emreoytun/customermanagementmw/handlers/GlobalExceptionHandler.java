@@ -1,4 +1,4 @@
-package com.emreoytun.customermanagementmw.business.handlers;
+package com.emreoytun.customermanagementmw.handlers;
 
 import com.emreoytun.customermanagementmw.dto.results.ErrorDataResult;
 import org.springframework.http.HttpStatus;
