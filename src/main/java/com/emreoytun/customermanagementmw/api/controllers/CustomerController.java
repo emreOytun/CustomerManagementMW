@@ -1,9 +1,9 @@
 package com.emreoytun.customermanagementmw.api.controllers;
 
+import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
+import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
 import com.emreoytun.customermanagementmw.business.abstracts.CustomerService;
-import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerAddRequest;
-import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerUpdateRequest;
-import com.emreoytun.customermanagementmw.dto.customer.responses.CustomerGetResponse;
+import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;

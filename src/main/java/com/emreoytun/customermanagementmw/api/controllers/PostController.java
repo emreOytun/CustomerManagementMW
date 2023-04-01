@@ -1,8 +1,8 @@
 package com.emreoytun.customermanagementmw.api.controllers;
 
+import com.emreoytun.customermanagementdata.dto.post.request.PostAddRequest;
 import com.emreoytun.customermanagementmw.dao.abstracts.CustomerDao;
 import com.emreoytun.customermanagementmw.dao.abstracts.PostDao;
-import com.emreoytun.customermanagementmw.dto.post.request.PostAddRequest;
 import com.emreoytun.customermanagementmw.entities.concretes.Customer;
 import com.emreoytun.customermanagementmw.entities.concretes.Post;
 import org.springframework.beans.BeanUtils;

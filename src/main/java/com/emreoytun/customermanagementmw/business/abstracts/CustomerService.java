@@ -1,8 +1,9 @@
 package com.emreoytun.customermanagementmw.business.abstracts;
 
-import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerAddRequest;
-import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerUpdateRequest;
-import com.emreoytun.customermanagementmw.dto.customer.responses.CustomerGetResponse;
+
+import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
+import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
+import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
 
 import java.util.List;
 

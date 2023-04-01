@@ -1,6 +1,6 @@
 package com.emreoytun.customermanagementmw.handlers;
 
-import com.emreoytun.customermanagementmw.dto.results.ErrorDataResult;
+import com.emreoytun.customermanagementdata.dto.results.ErrorDataResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;

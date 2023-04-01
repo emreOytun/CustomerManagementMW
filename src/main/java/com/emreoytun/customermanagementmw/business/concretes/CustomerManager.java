@@ -1,19 +1,19 @@
 package com.emreoytun.customermanagementmw.business.concretes;
 
+import com.emreoytun.customermanagementdata.dto.IModelMapperService;
+import com.emreoytun.customermanagementdata.dto.ModelMapperService;
+import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
+import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
+import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
 import com.emreoytun.customermanagementmw.business.abstracts.CustomerService;
 import com.emreoytun.customermanagementmw.business.exceptions.CustomerBusinessRulesException;
 import com.emreoytun.customermanagementmw.business.rules.CustomerBusinessRules;
 import com.emreoytun.customermanagementmw.dao.abstracts.CustomerDao;
 import com.emreoytun.customermanagementmw.dao.abstracts.PostDao;
-import com.emreoytun.customermanagementmw.dto.IModelMapperService;
-import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerAddRequest;
-import com.emreoytun.customermanagementmw.dto.customer.requests.CustomerUpdateRequest;
-import com.emreoytun.customermanagementmw.dto.customer.responses.CustomerGetResponse;
 import com.emreoytun.customermanagementmw.entities.concretes.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,11 +36,10 @@ public class CustomerManager implements CustomerService {
 
     // Dependency-injection
     @Autowired
-    public CustomerManager(CustomerDao customerDao, PostDao postDao, CustomerBusinessRules customerBusinessRules,
-                           IModelMapperService modelMapperService) {
+    public CustomerManager(CustomerDao customerDao, PostDao postDao, CustomerBusinessRules customerBusinessRules) {
         this.customerDao = customerDao;
         this.businessRules = customerBusinessRules;
-        this.modelMapperService = modelMapperService;
+        this.modelMapperService = new ModelMapperService();
         this.postDao = postDao;
     }
 

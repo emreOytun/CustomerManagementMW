@@ -17,17 +17,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
-    @Column(name = "user_name", length = 20, nullable = false)
-    private String userName;
-
-    @Column(name = "password", nullable = false)
-    private String password;
+@PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
+public class Customer extends User {
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
