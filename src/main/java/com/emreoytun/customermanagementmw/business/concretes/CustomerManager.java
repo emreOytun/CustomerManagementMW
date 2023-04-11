@@ -1,7 +1,6 @@
 package com.emreoytun.customermanagementmw.business.concretes;
 
 import com.emreoytun.customermanagementdata.dto.IModelMapperService;
-import com.emreoytun.customermanagementdata.dto.ModelMapperService;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
 import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
@@ -36,10 +35,11 @@ public class CustomerManager implements CustomerService {
 
     // Dependency-injection
     @Autowired
-    public CustomerManager(CustomerDao customerDao, PostDao postDao, CustomerBusinessRules customerBusinessRules) {
+    public CustomerManager(CustomerDao customerDao, PostDao postDao, CustomerBusinessRules customerBusinessRules,
+                           IModelMapperService modelMapperService) {
         this.customerDao = customerDao;
         this.businessRules = customerBusinessRules;
-        this.modelMapperService = new ModelMapperService();
+        this.modelMapperService = modelMapperService;
         this.postDao = postDao;
     }
 

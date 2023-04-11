@@ -1,8 +1,11 @@
 package com.emreoytun.customermanagementmw;
 
+import com.emreoytun.customermanagementdata.dto.IModelMapperService;
+import com.emreoytun.customermanagementdata.dto.ModelMapperService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -22,5 +25,15 @@ public class CustomerManagementMwApplication {
 				.select()
 				.apis(RequestHandlerSelectors.basePackage("com.emreoytun.customermanagementmw"))
 				.build();
+	}
+
+	@Bean
+	RestTemplate getRestTemplate() {
+		return new RestTemplate();
+	}
+
+	@Bean
+	IModelMapperService getModelMapperService() {
+		return new ModelMapperService();
 	}
 }
