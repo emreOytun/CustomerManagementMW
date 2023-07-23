@@ -80,5 +80,18 @@ public class CustomerConsumer {
         return responseEntity;
     }
 
+    public ResponseEntity<List<CustomerGetResponse>> getAllCustomersByPage(int pageSize, int pageNo) {
+        Map<String, String> uriVariables= new HashMap<>();
+        uriVariables.put("pageSize", String.valueOf(pageSize));
+        uriVariables.put("pageNo", String.valueOf(pageNo));
 
+        ParameterizedTypeReference<List<CustomerGetResponse>> responseType = new ParameterizedTypeReference<List<CustomerGetResponse>>() {};
+        return restTemplate.exchange(
+                "http://localhost:8082/api/customers/page?pageSize={pageSize}&",
+                HttpMethod.GET,
+                null,
+                responseType,
+                uriVariables
+        );
+    }
 }

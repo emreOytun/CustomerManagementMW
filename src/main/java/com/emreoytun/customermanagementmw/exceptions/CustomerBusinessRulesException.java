@@ -1,4 +1,4 @@
-package com.emreoytun.customermanagementmw.business.exceptions;
+package com.emreoytun.customermanagementmw.exceptions;
 
 import org.springframework.http.HttpStatus;
 

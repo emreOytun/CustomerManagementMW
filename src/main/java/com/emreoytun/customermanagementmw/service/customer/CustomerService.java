@@ -1,4 +1,4 @@
-package com.emreoytun.customermanagementmw.business.abstracts;
+package com.emreoytun.customermanagementmw.service.customer;
 
 
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;

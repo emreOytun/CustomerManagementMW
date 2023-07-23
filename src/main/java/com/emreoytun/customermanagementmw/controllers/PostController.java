@@ -1,10 +1,10 @@
-package com.emreoytun.customermanagementmw.api.controllers;
+package com.emreoytun.customermanagementmw.controllers;
 
 import com.emreoytun.customermanagementdata.dto.post.request.PostAddRequest;
-import com.emreoytun.customermanagementmw.dao.abstracts.CustomerDao;
-import com.emreoytun.customermanagementmw.dao.abstracts.PostDao;
-import com.emreoytun.customermanagementmw.entities.concretes.Customer;
-import com.emreoytun.customermanagementmw.entities.concretes.Post;
+import com.emreoytun.customermanagementdata.entities.Customer;
+import com.emreoytun.customermanagementdata.entities.Post;
+import com.emreoytun.customermanagementdata.repository.CustomerDao;
+import com.emreoytun.customermanagementdata.repository.PostDao;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

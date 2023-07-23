@@ -1,10 +1,10 @@
-package com.emreoytun.customermanagementmw.api.controllers;
+package com.emreoytun.customermanagementmw.controllers;
 
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
-import com.emreoytun.customermanagementmw.business.abstracts.CustomerService;
+import com.emreoytun.customermanagementmw.service.customer.CustomerService;
 import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import com.emreoytun.customermanagementmw.consumers.CustomerConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,32 +32,28 @@ public class CustomerController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void add(@RequestBody @Valid CustomerAddRequest customerAddDto) {
-        //customerService.addCustomer(customerAddDto);
-        customerConsumer.addCustomer(customerAddDto);
+        customerService.addCustomer(customerAddDto);
     }
 
     @PutMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict("CUSTOMERS")
     public void updateCustomer(@RequestBody @Valid CustomerUpdateRequest customerUpdateDto) {
-        //customerService.updateCustomer(customerUpdateDto);
-        customerConsumer.updateCustomer(customerUpdateDto);
+        customerService.updateCustomer(customerUpdateDto);
     }
 
     // TODO: ONLY-ADMIN
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCustomer(@PathVariable("id") int id) {
-        //customerService.deleteCustomer(id);
-        customerConsumer.deleteCustomer(id);
+        customerService.deleteCustomer(id);
     }
 
     // /customers/3
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     public CustomerGetResponse getCustomerById(@RequestParam(value = "id", required = true) int id) {
-        //return customerService.getCustomerById(id);
-        return customerConsumer.getCustomerById(id).getBody();
+        return customerService.getCustomerById(id);
     }
 
     @GetMapping()

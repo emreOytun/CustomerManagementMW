@@ -1,7 +1,7 @@
-package com.emreoytun.customermanagementmw.business.rules;
+package com.emreoytun.customermanagementmw.service.customer;
 
-import com.emreoytun.customermanagementmw.business.exceptions.CustomerBusinessRulesException;
-import com.emreoytun.customermanagementmw.dao.abstracts.CustomerDao;
+import com.emreoytun.customermanagementdata.repository.CustomerDao;
+import com.emreoytun.customermanagementmw.exceptions.CustomerBusinessRulesException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 
 // Component/Service/Bean
 @Component
-public class CustomerBusinessRules {
+public class CustomerServiceRules {
 
     private final CustomerDao customerDao;
-    private final Logger logger = LoggerFactory.getLogger(CustomerBusinessRules.class);
+    private final Logger logger = LoggerFactory.getLogger(CustomerServiceRules.class);
 
     @Autowired
-    public CustomerBusinessRules(CustomerDao customerDao) {
+    public CustomerServiceRules(CustomerDao customerDao) {
         this.customerDao = customerDao;
     }
 
