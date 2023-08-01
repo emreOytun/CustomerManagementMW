@@ -4,8 +4,6 @@ import com.emreoytun.customermanagementdata.dto.IModelMapperService;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
 import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
-import com.emreoytun.customermanagementdata.entities.Customer;
-import com.emreoytun.customermanagementdata.repository.CustomerDao;
 import com.emreoytun.customermanagementdata.repository.PostDao;
 import com.emreoytun.customermanagementmw.consumers.CustomerConsumer;
 import com.emreoytun.customermanagementmw.exceptions.CustomerBusinessRulesException;
@@ -30,7 +28,7 @@ public class CustomerManager implements CustomerService {
     private final Logger logger = LoggerFactory.getLogger(CustomerManager.class);
 
     @Autowired
-    public CustomerManager(CustomerDao customerDao, PostDao postDao, CustomerServiceRules customerServiceRules,
+    public CustomerManager(PostDao postDao, CustomerServiceRules customerServiceRules,
                            IModelMapperService modelMapperService, CustomerConsumer customerConsumer) {
         this.businessRules = customerServiceRules;
         this.modelMapperService = modelMapperService;
@@ -43,11 +41,9 @@ public class CustomerManager implements CustomerService {
         logger.info("Entering addCustomer method");
 
         businessRules.checkCustomerExistsCreate(customerAddDto.getUserName());
-        Customer customer = modelMapperService.map(customerAddDto, Customer.class);
         customerConsumer.addCustomer(customerAddDto);
 
-        logger.info("Customer with id " + customer.getId() + " and username " + customer.getUserName()
-                + " is deleted");
+        logger.info("Returning addCustomer method");
     }
 
     @Override
@@ -72,6 +68,7 @@ public class CustomerManager implements CustomerService {
         logger.info("Customer with id " + customerUpdateDto.getId() + " is updated");
     }
 
+    /* We can specify with which parameters key is constructed in @Cacheable annotation. */
     @Override
     public CustomerGetResponse getCustomerById(int id) throws CustomerBusinessRulesException {
         logger.info("Entering getCustomerById method");
@@ -88,6 +85,8 @@ public class CustomerManager implements CustomerService {
         if (customerGetDto == null) {
             throw new CustomerBusinessRulesException("Customer not found", HttpStatus.NOT_FOUND);
         }
+
+        logger.info("Returning getCustomerById method");
         return customerGetDto;
     }
 
@@ -101,6 +100,8 @@ public class CustomerManager implements CustomerService {
             throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         List<CustomerGetResponse> customerList = response.getBody();
+
+        logger.info("Returning getAllCustomers method");
         return customerList;
     }
 
@@ -116,8 +117,9 @@ public class CustomerManager implements CustomerService {
             throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        List<CustomerGetResponse> resultList = response.getBody().stream()
-                .map(customer -> modelMapperService.map(customer, CustomerGetResponse.class)).toList();
+        List<CustomerGetResponse> resultList = response.getBody();
+
+        logger.info("Returning getCustomersByPageNo method");
         return resultList;
     }
 }

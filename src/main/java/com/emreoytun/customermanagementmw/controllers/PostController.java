@@ -37,11 +37,9 @@ public class PostController {
         }
 
         Post post = new Post();
-        post.setId(customerId); // TODO:BAK
         BeanUtils.copyProperties(postDto, post);
 
         post.setCustomer(customer);
         postDao.save(post);
     }
-
 }

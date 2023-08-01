@@ -31,7 +31,7 @@ public class CustomerServiceRules {
     // Customer must not exist before.
     public void checkCustomerExistsCreate(String username) throws CustomerBusinessRulesException {
         logger.info("Entering checkCustomerExistsCreate method");
-        if ( customerDao.existsByUserName(username) ) {
+        if ( customerDao.existsByUsername(username) ) {
             logger.error("Customer has already been created.");
             throw new CustomerBusinessRulesException("Customer has already been created.");
         }

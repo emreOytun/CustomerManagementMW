@@ -2,32 +2,49 @@ package com.emreoytun.customermanagementmw.controllers;
 
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
+import com.emreoytun.customermanagementdata.entities.User;
+import com.emreoytun.customermanagementdata.repository.CustomerDao;
+import com.emreoytun.customermanagementdata.repository.UserDao;
+import com.emreoytun.customermanagementdata.validation.pageno.PageNoConstraint;
+import com.emreoytun.customermanagementdata.validation.pagesize.PageSizeConstraint;
 import com.emreoytun.customermanagementmw.service.customer.CustomerService;
 import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
 import jakarta.validation.Valid;
 
 import com.emreoytun.customermanagementmw.consumers.CustomerConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//localhost:8080/api/customers/
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    // SOLID
-    @Autowired
     private CustomerService customerService;
+    private CustomerConsumer customerConsumer;
+    private final CustomerDao customerDao;
+
+    private final UserDao userDao;
 
     @Autowired
-    private CustomerConsumer customerConsumer;
+    public CustomerController(CustomerService customerService, CustomerConsumer customerConsumer,
+                              CustomerDao customerDao, UserDao userDao) {
+        this.customerConsumer = customerConsumer;
+        this.customerService = customerService;
+        this.customerDao = customerDao;
+        this.userDao = userDao;
+    }
 
-    // JWT - HEADER -> "Authorization": Bearer .....
+
+    @GetMapping("/getUsers")
+    public List<User> getAllUsers() {
+        var u = SecurityContextHolder.getContext().getAuthentication();
+        u.getAuthorities().forEach(System.out::println);
+        return userDao.findAll();
+    }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
@@ -37,7 +54,6 @@ public class CustomerController {
 
     @PutMapping()
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict("CUSTOMERS")
     public void updateCustomer(@RequestBody @Valid CustomerUpdateRequest customerUpdateDto) {
         customerService.updateCustomer(customerUpdateDto);
     }
@@ -49,7 +65,6 @@ public class CustomerController {
         customerService.deleteCustomer(id);
     }
 
-    // /customers/3
     @GetMapping("/filter")
     @ResponseStatus(HttpStatus.OK)
     public CustomerGetResponse getCustomerById(@RequestParam(value = "id", required = true) int id) {
@@ -58,15 +73,15 @@ public class CustomerController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    @Cacheable("CUSTOMERS")
     public List<CustomerGetResponse> getAllCustomers() {
         return customerService.getAllCustomers();
     }
 
     @GetMapping("/page")
     @ResponseStatus(HttpStatus.OK)
-    public List<CustomerGetResponse> getCustomersByPage(@RequestParam(value = "pageSize", required = true) int pageSize,
-                                             @RequestParam(value = "pageNo", required = true) int pageNo) {
+    public List<CustomerGetResponse> getCustomersByPage(
+            @RequestParam(value = "pageSize", required = true) @PageSizeConstraint int pageSize,
+            @RequestParam(value = "pageNo", required = true) @PageNoConstraint int pageNo) {
 
         return customerService.getCustomersByPageNo(pageSize, pageNo);
     }
