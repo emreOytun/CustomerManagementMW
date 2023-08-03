@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/customers/{customerId}/posts")
+@RequestMapping("/api/v1/customers/{customerId}/posts")
 public class PostController {
 
     /*
@@ -30,7 +30,7 @@ public class PostController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@PathVariable("customerId") int customerId, PostAddRequest postDto) {
+    public void add(@PathVariable("customerId") int customerId, @RequestBody PostAddRequest postDto) {
         Customer customer = customerDao.findById(customerId);
         if (customer == null) {
             throw new RuntimeException();

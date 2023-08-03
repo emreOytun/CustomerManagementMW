@@ -1,17 +1,18 @@
 package com.emreoytun.customermanagementmw.service.customer;
 
 
-import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerAddRequest;
+import com.emreoytun.customermanagementdata.dto.customer.CustomerWithPostsDto;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
-import com.emreoytun.customermanagementdata.dto.customer.responses.CustomerGetResponse;
+import com.emreoytun.customermanagementdata.dto.customer.CustomerDto;
 
 import java.util.List;
 
 public interface CustomerService {
-    void addCustomer(CustomerAddRequest customerAddDto);
     void deleteCustomer(int id);
-    void updateCustomer(CustomerUpdateRequest customerUpdateDto);
-    CustomerGetResponse getCustomerById(int id);
-    List<CustomerGetResponse> getAllCustomers();
-    List<CustomerGetResponse> getCustomersByPageNo(int pageSize, int pageNo);
+    void updateCustomer(CustomerUpdateRequest customerUpdateDto, int currentUserId);
+    CustomerDto getCustomerById(int id);
+    List<CustomerDto> getAllCustomers();
+    List<CustomerDto> getCustomersByPageNo(int pageSize, int pageNo);
+
+    CustomerWithPostsDto getWithPosts(int customerId);
 }
