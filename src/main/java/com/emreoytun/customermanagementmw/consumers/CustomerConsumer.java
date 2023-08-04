@@ -1,10 +1,12 @@
 package com.emreoytun.customermanagementmw.consumers;
 
+import com.emreoytun.customermanagementdata.dto.authentication.request.RegisterRequest;
 import com.emreoytun.customermanagementdata.dto.customer.CustomerWithPostsDto;
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
 import com.emreoytun.customermanagementdata.dto.customer.CustomerDto;
 import com.emreoytun.customermanagementmw.constants.CustomerManagementConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@DependsOn("customer-management-constants")
 public class CustomerConsumer {
 
     private final RestTemplate restTemplate;
@@ -111,6 +114,47 @@ public class CustomerConsumer {
                 HttpMethod.DELETE,
                 null,
                 Void.class,
+                uriVariables
+        );
+    }
+
+    public ResponseEntity<Boolean> checkExists(String username) {
+        Map<String, String> uriVariables= new HashMap<>();
+        uriVariables.put("username", username);
+
+        String requestUrl = baseUrl + "/{username}/checkExistence";
+
+        return restTemplate.exchange(
+                requestUrl,
+                HttpMethod.GET,
+                null,
+                Boolean.class,
+                uriVariables
+        );
+    }
+
+    public ResponseEntity<Void> addCustomer(RegisterRequest registerRequest) {
+        HttpEntity<RegisterRequest> requestHttpEntity = new HttpEntity<>(registerRequest);
+        String requestUrl = baseUrl;
+
+        return restTemplate.exchange(
+                requestUrl,
+                HttpMethod.POST,
+                requestHttpEntity,
+                Void.class
+        );
+    }
+
+    public ResponseEntity<CustomerDto> getCustomerByUsername(String username) {
+        String requestUrl = baseUrl + "/{username}";
+        Map<String, String> uriVariables= new HashMap<>();
+        uriVariables.put("username", username);
+
+        return restTemplate.exchange(
+                requestUrl,
+                HttpMethod.GET,
+                null,
+                CustomerDto.class,
                 uriVariables
         );
     }
