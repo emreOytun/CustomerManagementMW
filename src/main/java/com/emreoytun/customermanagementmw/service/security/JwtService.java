@@ -1,4 +1,4 @@
-package com.emreoytun.customermanagementmw.security.jwt;
+package com.emreoytun.customermanagementmw.service.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

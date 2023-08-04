@@ -1,4 +1,4 @@
-package com.emreoytun.customermanagementmw.security.annotations;
+package com.emreoytun.customermanagementmw.annotations.security;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 

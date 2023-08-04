@@ -1,6 +1,6 @@
-package com.emreoytun.customermanagementmw.security;
+package com.emreoytun.customermanagementmw.filter.security;
 
-import com.emreoytun.customermanagementmw.security.jwt.JwtService;
+import com.emreoytun.customermanagementmw.service.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         null,
                         userDetails.getAuthorities()
                 );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (Exception e) {
             logger.error("There is an error with validating the token and extracting credentials.");

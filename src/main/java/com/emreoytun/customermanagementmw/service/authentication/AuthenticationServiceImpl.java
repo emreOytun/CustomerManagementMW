@@ -1,56 +1,69 @@
 package com.emreoytun.customermanagementmw.service.authentication;
 
+import com.emreoytun.customermanagementdata.dto.ModelMapperService;
 import com.emreoytun.customermanagementdata.dto.authentication.request.AuthenticationRequest;
 import com.emreoytun.customermanagementdata.dto.authentication.response.AuthenticationResponse;
 import com.emreoytun.customermanagementdata.dto.authentication.request.RegisterRequest;
-import com.emreoytun.customermanagementdata.entities.Customer;
-import com.emreoytun.customermanagementdata.entities.Role;
-import com.emreoytun.customermanagementdata.entities.User;
-import com.emreoytun.customermanagementdata.repository.CustomerDao;
-import com.emreoytun.customermanagementdata.repository.RoleDao;
-import com.emreoytun.customermanagementdata.repository.UserDao;
+import com.emreoytun.customermanagementdata.dto.user.UserDto;
 import com.emreoytun.customermanagementdata.exceptions.CustomerBusinessRulesException;
+import com.emreoytun.customermanagementmw.consumers.CustomerConsumer;
+import com.emreoytun.customermanagementmw.consumers.UserConsumer;
+import com.emreoytun.customermanagementmw.helper.HttpStatusChecker;
 import com.emreoytun.customermanagementmw.security.SecurityUser;
-import com.emreoytun.customermanagementmw.security.jwt.JwtService;
+import com.emreoytun.customermanagementmw.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
 
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final CustomerDao customerDao;
-    private final UserDao userDao;
+    private final ModelMapperService modelMapperService;
+    private final CustomerConsumer customerConsumer;
+    private final UserConsumer userConsumer;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final RoleDao roleDao;
 
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
-        if (userDao.existsByUsername(request.getUsername())) {
+        ResponseEntity<Boolean> checkExistsResponse = customerConsumer.checkExists(request.getUsername());
+        if (!HttpStatusChecker.checkIfHttpOk(checkExistsResponse.getStatusCode())) {
+            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // Check if given username exists before.
+        if (checkExistsResponse.getBody()) {
             throw new CustomerBusinessRulesException("Username exists before");
         }
 
-        Customer c = new Customer();
-        c.setFirstName(request.getFirstName());
-        c.setLastName(request.getLastName());
-        c.getUser().setUsername(request.getUsername());
-        c.getUser().setPassword(passwordEncoder.encode(request.getPassword()));
+        // Encode the password before inserting to the database.
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        Role role = roleDao.findByName("CUSTOMER");
-        c.getUser().setRoles(new HashSet<>());
-        c.getUser().getRoles().add(role);
+        // Save customer
+        ResponseEntity<Void> addResponse = customerConsumer.addCustomer(request);
+        if (!HttpStatusChecker.checkIfHttpOk(addResponse.getStatusCode())) {
+            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        customerDao.save(c);
+        // Fetch customer with id
+        ResponseEntity<UserDto> userResponse = userConsumer.getUserByUsername(request.getUsername());
+        if (!HttpStatusChecker.checkIfHttpOk(userResponse.getStatusCode())) {
+            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        String jwtToken = jwtService.generateToken(new SecurityUser(c.getUser()));
+        UserDto userDto = userResponse.getBody();
+        if (userDto == null) {
+            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        String jwtToken = jwtService.generateToken(new SecurityUser(userDto));
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
@@ -59,8 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
          authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-
-        User user = new User();
+        UserDto user = new UserDto();
         user.setUsername(request.getUsername());
 
         var jwtToken = jwtService.generateToken(new SecurityUser(user));

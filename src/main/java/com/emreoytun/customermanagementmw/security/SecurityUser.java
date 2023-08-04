@@ -1,14 +1,16 @@
 package com.emreoytun.customermanagementmw.security;
 
+import com.emreoytun.customermanagementdata.dto.user.UserDto;
 import com.emreoytun.customermanagementdata.entities.User;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 public class SecurityUser implements UserDetails {
 
     /*
@@ -17,9 +19,13 @@ public class SecurityUser implements UserDetails {
     2) Otherwise, we could just fetch the user and copy the details to the UserDetails but there are tons of work.
      */
 
-    private final User user;
+    private final UserDto user;
 
-    public User getUser() {
+    public SecurityUser(UserDto user) {
+        this.user = user;
+    }
+
+    public UserDto getUser() {
         return user;
     }
 

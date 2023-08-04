@@ -1,5 +1,6 @@
-package com.emreoytun.customermanagementmw.security;
+package com.emreoytun.customermanagementmw.configs.security;
 
+import com.emreoytun.customermanagementmw.filter.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +37,7 @@ public class SecurityConfig {
             "/swagger-ui/**",
             // other public endpoints of your API may be appended to this array
             "/api/v1/auth/**",
+            "/api/v1/auth/authenticate"
     };
 
 
@@ -59,10 +61,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers(AUTH_WHITELIST).permitAll()
-                .anyRequest().authenticated()
-                .and()
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(AUTH_WHITELIST).permitAll()
+                        .anyRequest().authenticated())
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .securityContext((securityContext) -> securityContext // IMPORTANT: Since Spring Security 6, we need to set default security context.
