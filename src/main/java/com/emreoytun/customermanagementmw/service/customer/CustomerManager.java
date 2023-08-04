@@ -54,24 +54,6 @@ public class CustomerManager implements CustomerService {
     }
 
     @Override
-    public CustomerWithPostsDto getWithPosts(int customerId) {
-        ResponseEntity<CustomerWithPostsDto> response = customerConsumer.getCustomerWithPosts(customerId);
-
-        if (!HttpStatusChecker.checkIfHttpOk(response.getStatusCode())) {
-            logger.error("There is an error while fetching the customer with id : " + customerId);
-
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new EntityNotFoundException();
-            }
-            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        CustomerWithPostsDto customerWithPostsDto = response.getBody();
-        logger.info("Returning getWithPosts method");
-        return response.getBody();
-    }
-
-    @Override
     public CustomerDto getCustomerById(int id) throws CustomerBusinessRulesException {
         logger.info("Entering getCustomerById method");
 
@@ -79,16 +61,38 @@ public class CustomerManager implements CustomerService {
 
         if (!HttpStatusChecker.checkIfHttpOk(response.getStatusCode())) {
             logger.error("There is an error while fetching the customer with id : " + id);
-
-            if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new EntityNotFoundException();
-            }
             throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         CustomerDto customerGetDto = response.getBody();
+        if (customerGetDto == null) {
+            String errorMsg = "There is no such customer with id : " + id;
+            logger.error(errorMsg);
+            throw new EntityNotFoundException(errorMsg);
+        }
+
         logger.info("Returning getCustomerById method");
         return customerGetDto;
+    }
+
+    @Override
+    public CustomerWithPostsDto getWithPosts(int customerId) {
+        ResponseEntity<CustomerWithPostsDto> response = customerConsumer.getCustomerWithPosts(customerId);
+
+        if (!HttpStatusChecker.checkIfHttpOk(response.getStatusCode())) {
+            logger.error("There is an error while fetching the customer with id : " + customerId);
+            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        CustomerWithPostsDto customerWithPostsDto = response.getBody();
+        if (customerWithPostsDto == null) {
+            String errorMsg = "There is no such customer with id : " + customerId;
+            logger.error(errorMsg);
+            throw new EntityNotFoundException(errorMsg);
+        }
+
+        logger.info("Returning getWithPosts method");
+        return response.getBody();
     }
 
     @Override

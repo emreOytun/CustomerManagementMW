@@ -3,7 +3,7 @@ package com.emreoytun.customermanagementmw.constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("customer-management-constants")
 public class CustomerManagementConstants {
     public static String CUSTOMER_MANAGEMENT_BACKEND_BASE_URL;
 

@@ -4,7 +4,7 @@ import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdate
 import com.emreoytun.customermanagementdata.dto.customer.CustomerWithPostsDto;
 import com.emreoytun.customermanagementdata.validation.pageno.PageNoConstraint;
 import com.emreoytun.customermanagementdata.validation.pagesize.PageSizeConstraint;
-import com.emreoytun.customermanagementmw.security.annotations.CurrentUserId;
+import com.emreoytun.customermanagementmw.annotations.security.CurrentUserId;
 import com.emreoytun.customermanagementmw.service.customer.CustomerService;
 import com.emreoytun.customermanagementdata.dto.customer.CustomerDto;
 import jakarta.validation.Valid;
