@@ -2,7 +2,6 @@ package com.emreoytun.customermanagementmw.service.security;
 
 import com.emreoytun.customermanagementdata.dto.user.UserDto;
 import com.emreoytun.customermanagementmw.consumers.UserConsumer;
-import com.emreoytun.customermanagementmw.helper.HttpStatusChecker;
 import com.emreoytun.customermanagementmw.security.SecurityUser;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -22,11 +21,6 @@ public class JpaUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         ResponseEntity<UserDto> userResponse = userConsumer.getUserByUsername(username);
-        if (!HttpStatusChecker.checkIfHttpOk(userResponse.getStatusCode())) {
-            logger.error("There is an error while loading the username: " + username);
-            throw new UsernameNotFoundException("Username not found : " + username);
-        }
-
         UserDto user = userResponse.getBody();
         if (user == null) {
             logger.error("Username not found : " + username);

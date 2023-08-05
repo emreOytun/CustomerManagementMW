@@ -1,9 +1,9 @@
 package com.emreoytun.customermanagementmw.cache;
 
-import com.emreoytun.customermanagementmw.security.SecurityUser;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -14,6 +14,8 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserCache implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 6700488849764243266L;
 
     private UserDetails userDetails;

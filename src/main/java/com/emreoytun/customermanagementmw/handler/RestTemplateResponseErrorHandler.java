@@ -1,0 +1,39 @@
+package com.emreoytun.customermanagementmw.handler;
+
+import com.emreoytun.customermanagementdata.exceptions.CustomException;
+import com.emreoytun.customermanagementdata.exceptions.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.ResponseErrorHandler;
+
+import java.io.IOException;
+
+@Component
+public class RestTemplateResponseErrorHandler
+        implements ResponseErrorHandler {
+
+    @Override
+    public boolean hasError(ClientHttpResponse httpResponse)
+            throws IOException {
+
+        return (
+                httpResponse.getStatusCode().is4xxClientError()
+                        || httpResponse.getStatusCode().is5xxServerError());
+    }
+
+    @Override
+    public void handleError(ClientHttpResponse httpResponse)
+            throws IOException {
+
+        if (httpResponse.getStatusCode().is5xxServerError()) {
+            // handle SERVER_ERROR
+        } else if (httpResponse.getStatusCode().is4xxClientError()) {
+            // handle CLIENT_ERROR
+            if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new EntityNotFoundException("Not found");
+            }
+            throw new CustomException(HttpStatus.BAD_REQUEST);
+        }
+    }
+}

@@ -4,10 +4,9 @@ import com.emreoytun.customermanagementdata.dto.authentication.request.Authentic
 import com.emreoytun.customermanagementdata.dto.authentication.response.AuthenticationResponse;
 import com.emreoytun.customermanagementdata.dto.authentication.request.RegisterRequest;
 import com.emreoytun.customermanagementdata.dto.user.UserDto;
-import com.emreoytun.customermanagementdata.exceptions.CustomerBusinessRulesException;
+import com.emreoytun.customermanagementdata.exceptions.CustomException;
 import com.emreoytun.customermanagementmw.consumers.CustomerConsumer;
 import com.emreoytun.customermanagementmw.consumers.UserConsumer;
-import com.emreoytun.customermanagementmw.helper.HttpStatusChecker;
 import com.emreoytun.customermanagementmw.security.SecurityUser;
 import com.emreoytun.customermanagementmw.service.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -32,33 +31,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse register(RegisterRequest request) {
         ResponseEntity<Boolean> checkExistsResponse = customerConsumer.checkExists(request.getUsername());
-        if (!HttpStatusChecker.checkIfHttpOk(checkExistsResponse.getStatusCode())) {
-            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
 
         // Check if given username exists before.
         if (checkExistsResponse.getBody()) {
-            throw new CustomerBusinessRulesException("Username exists before");
+            throw new CustomException("Username exists before");
         }
 
         // Encode the password before inserting to the database.
         request.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Save customer
-        ResponseEntity<Void> addResponse = customerConsumer.addCustomer(request);
-        if (!HttpStatusChecker.checkIfHttpOk(addResponse.getStatusCode())) {
-            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        customerConsumer.addCustomer(request);
 
         // Fetch customer with id
         ResponseEntity<UserDto> userResponse = userConsumer.getUserByUsername(request.getUsername());
-        if (!HttpStatusChecker.checkIfHttpOk(userResponse.getStatusCode())) {
-            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
 
         UserDto userDto = userResponse.getBody();
         if (userDto == null) {
-            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("There is a problem with saving the user.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String jwtToken = jwtService.generateToken(new SecurityUser(userDto));
@@ -72,13 +62,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         ResponseEntity<UserDto> response = userConsumer.getUserByUsername(request.getUsername());
-        if (!HttpStatusChecker.checkIfHttpOk(response.getStatusCode())) {
-            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
         UserDto userDto = response.getBody();
-        var jwtToken = jwtService.generateToken(new SecurityUser(userDto));
 
+        var jwtToken = jwtService.generateToken(new SecurityUser(userDto));
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
