@@ -53,16 +53,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtService.extractUsername(jwtToken);
 
                 String userCacheMapKey = CacheConstants.classMapkeyMap.get(UserCache.class);
+                long expireTimeInMs = System.currentTimeMillis() + CustomerManagementConstants.USER_EXPIRE_TIME_IN_MS;
+                Date expireTime = new Date(expireTimeInMs);
+
                 UserCache userCache = (UserCache) cacheService.getValueFromCache(userCacheMapKey, username);
                 if (userCache == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                     userCache = new UserCache();
                     userCache.setUserDetails(userDetails);
-
-                    long expireTimeInMs = System.currentTimeMillis() + CustomerManagementConstants.USER_EXPIRE_TIME_IN_MS;
-                    userCache.setExpireTime(new Date(expireTimeInMs));
-                    cacheService.cache(userCacheMapKey, userDetails.getUsername(), userCache);
                 }
+                // Update expire time
+                userCache.setExpireTime(expireTime);
+                cacheService.cache(userCacheMapKey, username, userCache);
 
                 UserDetails userDetails = userCache.getUserDetails();
 
