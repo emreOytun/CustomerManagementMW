@@ -6,6 +6,7 @@ import com.emreoytun.customermanagementdata.dto.customer.CustomerDto;
 import com.emreoytun.customermanagementdata.exceptions.EntityNotFoundException;
 import com.emreoytun.customermanagementmw.consumers.CustomerConsumer;
 import com.emreoytun.customermanagementdata.exceptions.CustomException;
+import com.emreoytun.customermanagementmw.cache.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,13 @@ import java.util.List;
 public class CustomerManager implements CustomerService {
     private final CustomerConsumer customerConsumer;
     private final Logger logger = LoggerFactory.getLogger(CustomerManager.class);
+    private final CacheService cacheService;
 
     @Override
     public List<CustomerDto> getAllCustomers() {
         logger.info("Entering getAllCustomers method");
+
+        Object obj = cacheService.getCacheValue("e.oytun58");
 
         ResponseEntity<List<CustomerDto>> response = customerConsumer.getAllCustomers();
         List<CustomerDto> customerList = response.getBody();

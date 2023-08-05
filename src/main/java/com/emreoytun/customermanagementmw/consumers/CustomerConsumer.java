@@ -59,17 +59,14 @@ public class CustomerConsumer {
     }
 
     public ResponseEntity<CustomerDto> getCustomerById(int id) {
-        Map<String, String> uriVariables= new HashMap<>();
-        uriVariables.put("id", String.valueOf(id));
 
-        String requestUrl = baseUrl + "/{id}";
+        String requestUrl = baseUrl + "/getById?id=" + id;
 
         return restTemplate.exchange(
                 requestUrl,
                 HttpMethod.GET,
                 null,
-                CustomerDto.class,
-                uriVariables
+                CustomerDto.class
         );
     }
 

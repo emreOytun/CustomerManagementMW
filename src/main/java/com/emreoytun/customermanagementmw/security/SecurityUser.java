@@ -1,10 +1,6 @@
 package com.emreoytun.customermanagementmw.security;
 
 import com.emreoytun.customermanagementdata.dto.user.UserDto;
-import com.emreoytun.customermanagementdata.entities.User;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

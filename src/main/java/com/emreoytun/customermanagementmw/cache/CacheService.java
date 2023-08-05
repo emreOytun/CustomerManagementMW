@@ -1,10 +1,14 @@
-package com.emreoytun.customermanagementmw.service.cache;
+package com.emreoytun.customermanagementmw.cache;
 
 
 import java.util.List;
 
 public interface CacheService {
 
+
+    void cacheValueWithTTL(String key, Object value, long ttlInSecond);
+
+    Object getCacheValue(String key);
 
     // @param Object value should implement Serializable interface.
     void cacheWithHashKeyTTL(String mapKey, String key, Object value, long ttlInSeconds);

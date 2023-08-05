@@ -1,7 +1,6 @@
 package com.emreoytun.customermanagementmw.security;
 
 import com.emreoytun.customermanagementdata.dto.role.RoleDto;
-import com.emreoytun.customermanagementdata.entities.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 

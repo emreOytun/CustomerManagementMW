@@ -1,10 +1,11 @@
-package com.emreoytun.customermanagementmw.service.cache;
+package com.emreoytun.customermanagementmw.cache;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,16 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class RedisService implements CacheService {
     private final RedisTemplate<String, Object> redisTemplate;
+
+    @Override
+    public void cacheValueWithTTL(String key, Object value, long ttlInSecond) {
+        redisTemplate.opsForValue().set(key, value, Duration.ofSeconds(ttlInSecond));
+    }
+
+    @Override
+    public Object getCacheValue(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
 
     // @param Object value should implement Serializable interface.
     @Override

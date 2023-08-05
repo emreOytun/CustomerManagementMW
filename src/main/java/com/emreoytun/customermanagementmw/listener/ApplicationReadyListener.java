@@ -1,6 +1,6 @@
 package com.emreoytun.customermanagementmw.listener;
 
-import com.emreoytun.customermanagementmw.service.cache.CacheService;
+import com.emreoytun.customermanagementmw.cache.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

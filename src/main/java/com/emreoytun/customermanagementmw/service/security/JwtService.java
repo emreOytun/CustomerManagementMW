@@ -31,7 +31,7 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        int totalExpireTimeInMs = 1000 * CustomerManagementConstants.USER_EXPIRE_TIME_IN_MS;
+        int totalExpireTimeInMs = 1000 * CustomerManagementConstants.USER_EXPIRE_TIME_IN_SECONDS;
 
         return Jwts.builder()
                 .setClaims(extraClaims)

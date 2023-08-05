@@ -1,45 +1,38 @@
 package com.emreoytun.customermanagementmw.controllers;
 
+import com.emreoytun.customermanagementdata.dto.post.PostDto;
 import com.emreoytun.customermanagementdata.dto.post.request.PostAddRequest;
-import com.emreoytun.customermanagementdata.entities.Customer;
-import com.emreoytun.customermanagementdata.entities.Post;
-import com.emreoytun.customermanagementdata.repository.CustomerDao;
-import com.emreoytun.customermanagementdata.repository.PostDao;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.emreoytun.customermanagementmw.annotations.security.CurrentUserId;
+import com.emreoytun.customermanagementmw.service.post.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1/customers/{customerId}/posts")
+@RequestMapping("/api/v1/posts")
+@RequiredArgsConstructor
 public class PostController {
+    private final PostService postService;
 
-    /*
-    Customer - Post -> One - Many
-    /api/customers/{customerId}/posts/... -> User
-     */
-
-    private PostDao postDao;
-    private CustomerDao customerDao;
-
-    @Autowired
-    public PostController(PostDao postDao, CustomerDao customerDao) {
-        this.postDao = postDao;
-        this.customerDao = customerDao;
-    }
-
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void add(@PathVariable("customerId") int customerId, @RequestBody PostAddRequest postDto) {
-        Customer customer = customerDao.findById(customerId);
-        if (customer == null) {
-            throw new RuntimeException();
-        }
-
-        Post post = new Post();
-        BeanUtils.copyProperties(postDto, post);
-
-        post.setCustomer(customer);
-        postDao.save(post);
+    public void addPost(@CurrentUserId int customerId, @RequestBody PostAddRequest postAddRequest) {
+        postAddRequest.setCustomerID(customerId);
+        postService.addPost(postAddRequest);
     }
+
+    @GetMapping("/getCustomerPosts")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PostDto> getPostsByCustomerId(@RequestParam("customerId") int customerId) {
+        return postService.getPostsByCustomerId(customerId);
+    }
+
+    @DeleteMapping("/deleteAllCustomerPosts")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAllByCustomerId(@CurrentUserId int customerId) {
+        postService.deleteAllByCustomerId(customerId);
+    }
+
 }
