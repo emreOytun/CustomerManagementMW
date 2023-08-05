@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class JpaUserDetailsService implements UserDetailsService {
     private final UserConsumer userConsumer;
-
     private final Logger logger = LoggerFactory.getLogger(JpaUserDetailsService.class);
 
     @Override

@@ -1,5 +1,9 @@
 package com.emreoytun.customermanagementmw.filter.security;
 
+import com.emreoytun.customermanagementmw.cache.UserCache;
+import com.emreoytun.customermanagementmw.constants.CustomerManagementConstants;
+import com.emreoytun.customermanagementmw.constants.cache.CacheConstants;
+import com.emreoytun.customermanagementmw.service.cache.CacheService;
 import com.emreoytun.customermanagementmw.service.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
 
 // OncePerRequestFilter is provided us by Spring such that it already implements Filter interface.
 // We could have implemented Filter interface too, but this way is easier and better.
@@ -24,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final CacheService cacheService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -45,7 +51,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Try to get user from the database in that way we check if there exists such user.
                 // Also check expiration date. (jwtService.isTokenValid does this)
                 String username = jwtService.extractUsername(jwtToken);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                String userCacheMapKey = CacheConstants.classMapkeyMap.get(UserCache.class);
+                UserCache userCache = (UserCache) cacheService.getValueFromCache(userCacheMapKey, username);
+                if (userCache == null) {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    userCache = new UserCache();
+                    userCache.setUserDetails(userDetails);
+
+                    long expireTimeInMs = System.currentTimeMillis() + CustomerManagementConstants.USER_EXPIRE_TIME_IN_MS;
+                    userCache.setExpireTime(new Date(expireTimeInMs));
+                    cacheService.cache(userCacheMapKey, userDetails.getUsername(), userCache);
+                }
+
+                UserDetails userDetails = userCache.getUserDetails();
 
                 // Update SecurityContextHolder.
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

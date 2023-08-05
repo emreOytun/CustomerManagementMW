@@ -2,8 +2,8 @@ package com.emreoytun.customermanagementmw.controllers;
 
 import com.emreoytun.customermanagementdata.dto.customer.requests.CustomerUpdateRequest;
 import com.emreoytun.customermanagementdata.dto.customer.CustomerWithPostsDto;
-import com.emreoytun.customermanagementdata.validation.pageno.PageNoConstraint;
-import com.emreoytun.customermanagementdata.validation.pagesize.PageSizeConstraint;
+import com.emreoytun.customermanagementmw.validation.pageno.PageNoConstraint;
+import com.emreoytun.customermanagementmw.validation.pagesize.PageSizeConstraint;
 import com.emreoytun.customermanagementmw.annotations.security.CurrentUserId;
 import com.emreoytun.customermanagementmw.service.customer.CustomerService;
 import com.emreoytun.customermanagementdata.dto.customer.CustomerDto;

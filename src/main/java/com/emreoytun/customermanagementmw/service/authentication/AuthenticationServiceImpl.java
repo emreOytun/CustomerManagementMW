@@ -1,6 +1,5 @@
 package com.emreoytun.customermanagementmw.service.authentication;
 
-import com.emreoytun.customermanagementdata.dto.ModelMapperService;
 import com.emreoytun.customermanagementdata.dto.authentication.request.AuthenticationRequest;
 import com.emreoytun.customermanagementdata.dto.authentication.response.AuthenticationResponse;
 import com.emreoytun.customermanagementdata.dto.authentication.request.RegisterRequest;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final ModelMapperService modelMapperService;
     private final CustomerConsumer customerConsumer;
     private final UserConsumer userConsumer;
     private final JwtService jwtService;
@@ -69,13 +67,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
          authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        UserDto user = new UserDto();
-        user.setUsername(request.getUsername());
+        ResponseEntity<UserDto> response = userConsumer.getUserByUsername(request.getUsername());
+        if (!HttpStatusChecker.checkIfHttpOk(response.getStatusCode())) {
+            throw new CustomerBusinessRulesException("Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        var jwtToken = jwtService.generateToken(new SecurityUser(user));
+        UserDto userDto = response.getBody();
+        var jwtToken = jwtService.generateToken(new SecurityUser(userDto));
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

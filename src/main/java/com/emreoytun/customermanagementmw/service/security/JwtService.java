@@ -1,10 +1,12 @@
 package com.emreoytun.customermanagementmw.service.security;
 
+import com.emreoytun.customermanagementmw.constants.CustomerManagementConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,35 +19,25 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-
-    // RUN IT WHEN YOU ADD ROW TO THE USER TABLE MANUALLY.
-    /*
-    @Autowired
-    public JwtService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-
-        List<User> users = userRepository.findAll();
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        for (User u : users) {
-            u.setPassword(passwordEncoder.encode(u.getPassword()));
-            userRepository.save(u);
-        }
-    }
-     */
-
     // It's generated using the website; and this key is secret and unique for my application.
-    private static final String SECRET_KEY = "66556A586E3272357538782F4125442A472D4B6150645367566B597033733676";
+    private final String SECRET_KEY;
+
+    public JwtService(@Value("${SECRET_KEY}") String SECRET_KEY) {
+        this.SECRET_KEY = SECRET_KEY;
+    }
 
     // Generates JWT Token using extra claims map and username subject from our UserDetails class.
     public String generateToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+        int totalExpireTimeInMs = 1000 * CustomerManagementConstants.USER_EXPIRE_TIME_IN_MS;
+
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + totalExpireTimeInMs))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
