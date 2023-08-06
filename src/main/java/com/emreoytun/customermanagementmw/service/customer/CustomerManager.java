@@ -21,36 +21,23 @@ import java.util.List;
 public class CustomerManager implements CustomerService {
     private final CustomerConsumer customerConsumer;
     private final Logger logger = LoggerFactory.getLogger(CustomerManager.class);
-    private final CacheService cacheService;
 
     @Override
     public List<CustomerDto> getAllCustomers() {
-        logger.info("Entering getAllCustomers method");
-
-        Object obj = cacheService.getCacheValue("e.oytun58");
-
         ResponseEntity<List<CustomerDto>> response = customerConsumer.getAllCustomers();
         List<CustomerDto> customerList = response.getBody();
-
-        logger.info("Returning getAllCustomers method");
         return customerList;
     }
 
     @Override
     public List<CustomerDto> getCustomersByPageNo(int pageSize, int pageNo) throws CustomException {
-        logger.info("Entering getCustomersByPageNo method");
-
         ResponseEntity<List<CustomerDto>> response = customerConsumer.getAllCustomersByPage(pageSize, pageNo);
         List<CustomerDto> resultList = response.getBody();
-
-        logger.info("Returning getCustomersByPageNo method");
         return resultList;
     }
 
     @Override
     public CustomerDto getCustomerById(int id) throws CustomException {
-        logger.info("Entering getCustomerById method");
-
         ResponseEntity<CustomerDto> response = customerConsumer.getCustomerById(id);
         CustomerDto customerGetDto = response.getBody();
         if (customerGetDto == null) {
@@ -58,8 +45,6 @@ public class CustomerManager implements CustomerService {
             logger.error(errorMsg);
             throw new EntityNotFoundException(errorMsg);
         }
-
-        logger.info("Returning getCustomerById method");
         return customerGetDto;
     }
 
@@ -72,29 +57,19 @@ public class CustomerManager implements CustomerService {
             logger.error(errorMsg);
             throw new EntityNotFoundException(errorMsg);
         }
-
-        logger.info("Returning getWithPosts method");
         return response.getBody();
     }
 
     @Override
     public void updateCustomer(CustomerUpdateRequest customerUpdateDto, int currentUserId) throws CustomException {
-        logger.info("Entering updateCustomer method");
-
         // Set the id as the current user id to be updated.
         customerUpdateDto.setId(currentUserId);
         customerConsumer.updateCustomer(customerUpdateDto);
-
-        logger.info("Customer with id " + customerUpdateDto.getId() + " is updated");
     }
 
     @Override
     public void deleteCustomer(int id) throws CustomException {
-        logger.info("Entering deleteCustomer method");
-
         customerConsumer.deleteCustomer(id);
-
-        logger.info("Customer with id " + id + " is deleted");
     }
 
 }
