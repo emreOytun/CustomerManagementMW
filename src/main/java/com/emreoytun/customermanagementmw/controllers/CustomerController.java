@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,12 +52,14 @@ public class CustomerController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole(CUSTOMER)")
     public void updateCustomer(@RequestBody @Valid CustomerUpdateRequest customerUpdateDto, @CurrentUserId int currentUserId) {
         customerService.updateCustomer(customerUpdateDto, currentUserId);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole(CUSTOMER)")
     public void deleteCustomer(@CurrentUserId int currentUserId) {
         customerService.deleteCustomer(currentUserId);
     }
